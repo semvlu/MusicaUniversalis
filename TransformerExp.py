@@ -84,7 +84,13 @@ stratify=feat['composer'], test_size=0.2, random_state=42)
 # Transformer Encoder Block
 def transformer_encoder(inputs, head_size, num_heads, ff_dim, dropout=0.1):
     norm1 = LayerNormalization(epsilon=1e-4)(inputs)
-    atn_out = MultiHeadAttention(key_dim=head_size, num_heads=num_heads, dropout=dropout)(norm1, norm1)
+    atn_out = MultiHeadAttention(
+        key_dim=head_size, 
+        num_heads=num_heads, 
+        dropout=dropout)(norm1, norm1) # query & key
+        # Query (Q): the context in which the attention is being computed. i.e. the input seq 
+        # Key (K): the input seq that the model is attending to, to compute the attention weights.
+        # Value (V): the input seq that the model is trying to weight or attend to.
     # Dropout and skip connection
     atn_out = Dropout(dropout)(atn_out)
     # Residual
@@ -94,13 +100,14 @@ def transformer_encoder(inputs, head_size, num_heads, ff_dim, dropout=0.1):
     # Feed-forward layer
     ff = Dense(ff_dim, activation='relu')(norm2)
     ff = Dropout(dropout)(ff)
-    ff = Dense(inputs.shape[-1])(ff)
+    ff = Dense(inputs.shape[-1])(ff) # 100, same as [2] 
     # Skip connection
     return ff + atn_res
 
 
 # Define model
 inputs = Input(shape=(150,100))
+
 # Transformer Encoder Block
 encoder_out = transformer_encoder(inputs, head_size=128, num_heads=8, ff_dim=128, dropout=0.1)
 pool = GlobalAveragePooling1D()(encoder_out)
