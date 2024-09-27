@@ -4,6 +4,7 @@ import pandas as pd
 import pretty_midi
 import os
 import warnings
+import pickle
 import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
@@ -18,9 +19,8 @@ from tensorflow.keras.models import Model
 from scores import scores_cm
 
 os.chdir('maestro-v3.0.0/')
-df = pd.read_csv('maestro-v3.0.0.csv')
-feat = extract_feat(df)
-
+with open('rolls.pickle', 'rb') as f:
+    feat = pickle.load(f)
 
 print(feat['roll'].iloc[1].shape)
 print(feat['roll'].iloc[1][1].shape)
