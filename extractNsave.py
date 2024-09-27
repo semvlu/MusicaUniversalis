@@ -48,7 +48,7 @@ def extract_feat(metadata):
     return features
 
 '''
-with open('features.pickle', 'rb') as f:
+with open('rolls.pickle', 'rb') as f:
     feat = pickle.load(f)
 
 print(feat.head())  # print the first few rows of the DataFrame
